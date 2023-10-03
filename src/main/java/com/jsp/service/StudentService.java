@@ -1,5 +1,6 @@
 package com.jsp.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.jsp.dao.BookDao;
@@ -50,19 +51,16 @@ public class StudentService {
 		return studentDao.getAllStudents();
 	}
 	
-	public boolean requestBook(int bookid, int studid, int libid) {
+	public boolean requestBook(int bookid, int studid) {
 
 		Book book = bookDao.getBookById(bookid);
 		Student student = studentDao.getStudentById(studid);
-		Librarian librarian = librarianDao.getLibrarianById(libid);
 		
-		if(librarian != null && book != null && student != null && 
-			book.getStatus().equals("Available") && 
-			librarian.getStatus().equalsIgnoreCase("authorised")) {
+		if(book != null && student != null && 
+			book.getStatus().equals("Available")) {
 			
 			book.setStatus("In-request");
 			book.setStudent(student);
-			book.setLibrarian(librarian);
 			return bookDao.requestBook(book);
 		}
 		else {
@@ -70,6 +68,18 @@ public class StudentService {
 		}
 		return true;
 		
+	}
+	
+	public List<Book> viewAllAvaliableBooks() {
+		BookService bookService = new BookService();
+		List<Book> books = bookService.getAllBooks();
+		List<Book> avaliableBooks = new ArrayList<Book>();
+		for (Book book : books) {
+			if (book.getStatus().equalsIgnoreCase("Available")) {
+				avaliableBooks.add(book);
+			}
+		}
+		return avaliableBooks;
 	}
 	
 }
